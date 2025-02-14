@@ -32,16 +32,10 @@ Windows Subsystem for Linux (WSL) is a powerful feature that allows you to run a
 ## Step 2: Set Up Port Forwarding on Windows
 
 1. Open PowerShell as Administrator on Windows.
-2. Get your WSL IP address:
-   ```powershell
-   wsl hostname -I
+2. Get your WSL IP address and set up port forwarding:
+   ``` powershell
+   netsh interface portproxy add v4tov4 listenport=2222 listenaddress=0.0.0.0 connectport=2222 connectaddress=$((wsl hostname -i).trim())
    ```
-   Note down this IP address.
-3. Set up port forwarding:
-   ```powershell
-   netsh interface portproxy add v4tov4 listenport=2222 listenaddress=0.0.0.0 connectport=2222 connectaddress=<WSL_IP_ADDRESS>
-   ```
-   Replace `<WSL_IP_ADDRESS>` with the IP address you noted earlier.
 
 ## Step 3: Configure Windows Firewall
 
@@ -128,7 +122,13 @@ Despite following the steps above, you might encounter some issues. Here are som
 
 **Possible causes and solutions:**
 - The public key is not properly added to `authorized_keys`.
-  - Solution: Verify the content of `~/.ssh/authorized_keys` in WSL
+  - Solution 1: Verify the content of `~/.ssh/authorized_keys` in WSL
+  - Solution 2: use `ssh-copy-id` to update `~/.ssh/authorized_keys` on linux:
+     1. Enable password login from Linux by updating `/etc/ssh/sshd_config`, set `PasswordAuthentication` to  `yes`
+     2. Run `ssh-copy-id` from your mac
+        ``` bash
+        ssh-copy-id -i ~/.ssh/id_rsa -n -p 2222 <your user name>@<your windows machine name or ip address>
+        ```
 - Incorrect permissions on SSH files.
   - Solution: In WSL, run:
     ```bash
