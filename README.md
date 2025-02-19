@@ -34,7 +34,7 @@ Windows Subsystem for Linux (WSL) is a powerful feature that allows you to run a
 1. Open PowerShell as Administrator on Windows.
 2. Get your WSL IP address and set up port forwarding:
    ``` powershell
-   netsh interface portproxy add v4tov4 listenport=2222 listenaddress=0.0.0.0 connectport=2222 connectaddress=$((wsl hostname -i).trim())
+   netsh interface portproxy add v4tov4 listenport=2222 listenaddress=0.0.0.0 connectport=2222 connectaddress=$((wsl hostname -I).trim())
    ```
 
 ## Step 3: Configure Windows Firewall
