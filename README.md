@@ -108,13 +108,16 @@ Despite following the steps above, you might encounter some issues. Here are som
 **Symptom:** SSH connection attempt results in a timeout.
 
 **Possible causes and solutions:**
-- WSL SSH service is not running. 
-  - Solution: In WSL, run `sudo service ssh start`
-- Port forwarding is not set up correctly. 
-  - Solution: Check with `netsh interface portproxy show v4tov4`
+- WSL SSH service is not running.
+  
+   **Solution**: In WSL, run `sudo service ssh start`
+- Port forwarding is not set up correctly.
+  
+   **Solution**: Check with `netsh interface portproxy show v4tov4`
   - If empty, set up port forwarding as described in Step 2
-- Windows Firewall is blocking the connection. 
-  - Solution: Verify the firewall rule for port 2222 is active
+- Windows Firewall is blocking the connection.
+  
+   **Solution**: Verify the firewall rule for port 2222 is active
 
 ### 2. Authentication Failure
 
@@ -122,21 +125,25 @@ Despite following the steps above, you might encounter some issues. Here are som
 
 **Possible causes and solutions:**
 - The public key is not properly added to `authorized_keys`.
-  - Solution 1: Verify the content of `~/.ssh/authorized_keys` in WSL
-  - Solution 2: use `ssh-copy-id` to update `~/.ssh/authorized_keys` on linux:
+  
+   **Solution 1**: Verify the content of `~/.ssh/authorized_keys` in WSL
+
+   **Solution 2**: use `ssh-copy-id` to update `~/.ssh/authorized_keys` on linux:
      1. Enable password login from Linux by updating `/etc/ssh/sshd_config`, set `PasswordAuthentication` to  `yes`
      2. Run `ssh-copy-id` from your mac
         ``` bash
         ssh-copy-id -i ~/.ssh/id_rsa -n -p 2222 <your user name>@<your windows machine name or ip address>
         ```
 - Incorrect permissions on SSH files.
-  - Solution: In WSL, run:
+  
+   **Solution**: In WSL, run:
     ```bash
     chmod 700 ~/.ssh
     chmod 600 ~/.ssh/authorized_keys
     ```
 - Incorrect filename for authorized keys.
-  - Solution: Ensure the file is named `authorized_keys`, not `authorized_users` or anything else
+  
+   **Solution**: Ensure the file is named `authorized_keys`, not `authorized_users` or anything else
 
 ### 3. SSH Server Refuses Connection
 
@@ -144,9 +151,12 @@ Despite following the steps above, you might encounter some issues. Here are som
 
 **Possible causes and solutions:**
 - SSH server is not running on the specified port.
-  - Solution: Check SSH config in WSL (`/etc/ssh/sshd_config`) to ensure it's set to use port 2222
+
+   **Solution**: Check SSH config in WSL (`/etc/ssh/sshd_config`) to ensure it's set to use port 2222
+
 - WSL instance is not running.
-  - Solution: Open a WSL terminal on your Windows machine to start the instance
+  
+   **Solution**: Open a WSL terminal on your Windows machine to start the instance
 
 ### 4. Host Key Verification Failed
 
@@ -154,7 +164,8 @@ Despite following the steps above, you might encounter some issues. Here are som
 
 **Possible causes and solutions:**
 - The host key has changed (common if you've reinstalled WSL).
-  - Solution: Remove the old key from your Mac's `known_hosts` file:
+  
+   **Solution**: Remove the old key from your Mac's `known_hosts` file:
     ```bash
     ssh-keygen -R "[your_windows_ip]:2222"
     ```
@@ -165,7 +176,8 @@ Despite following the steps above, you might encounter some issues. Here are som
 
 **Possible causes and solutions:**
 - WSL IP address has changed after a restart.
-  - Solution: Update the port forwarding rule with the new IP:
+  
+   **Solution**: Update the port forwarding rule with the new IP:
     1. In WSL, get the new IP: `ip addr show eth0`
     2. In Windows PowerShell (as admin), update the rule:
        ```powershell
@@ -179,16 +191,23 @@ Despite following the steps above, you might encounter some issues. Here are som
 
 **Possible causes and solutions:**
 - Windows OpenSSH is not using the WSL shell.
-  - Solution: Set the default shell for SSH connections:
+  
+   **Solution**: Set the default shell for SSH connections:
     1. In Windows PowerShell (as admin):
        ```powershell
        New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\wsl.exe" -PropertyType String -Force
        ```
     2. Restart the SSH service: `Restart-Service sshd`
 
-Remember, when troubleshooting SSH connections, the verbose mode (`ssh -v wsl`) can provide helpful diagnostic information. Don't hesitate to use it when you encounter issues.
+Remember, when troubleshooting SSH connections, the verbose mode (`ssh -v wsl`) can provide helpful diagnostic information.
 
-By being aware of these common issues and their solutions, you'll be better prepared to troubleshoot any problems that arise when setting up SSH access to your WSL environment from your Mac.
+### 7. Connection Closed by Remote Host
+
+**Symptom:** You get an error message like "Connection closed by [your_ip_address] port 2222".
+**Possible causes and solutions:**
+- **Stale SSH known_hosts entries**: Your Mac might have old or incorrect SSH key information for the WSL instance.
+  
+   **Solution**: Delete the ~/.ssh/known_hosts file or the specific outdated entry within that file on your Mac. You might also have a ~/.ssh/known_hosts.old file that could be causing issues if it was recently renamed. Try removing or renaming this file as well. The next time you connect, you will be prompted to accept the new host key.
 
 ## Contributing
 
