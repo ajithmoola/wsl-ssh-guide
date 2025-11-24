@@ -83,12 +83,12 @@ Windows Subsystem for Linux (WSL) is a powerful feature that allows you to run a
 2. Add the following:
    ```
    Host wsl
-       HostName <WINDOWS_IP>
+       HostName <WSL_IP>
        User <WSL_USERNAME>
        Port 2222
        IdentityFile ~/.ssh/id_rsa
    ```
-   Replace `<WINDOWS_IP>` with your Windows machine's IP address and `<WSL_USERNAME>` with your WSL username.
+   Replace `<WSL_IP>` with your WSL's IP address and `<WSL_USERNAME>` with your WSL username.
 
 ## Step 7: Connect from Mac to WSL
 
